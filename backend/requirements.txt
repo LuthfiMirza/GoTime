@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pandas
+scikit-learn
+joblib
+requests
+python-dotenv
+pydantic>=2.0

@@ -1,0 +1,14 @@
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/model/*.pkl
+backend/.env
+.DS_Store
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+PLAN.md
+CLAUDE.md
+backend/CLAUDE-backend.md
+frontend/CLAUDE-frontend.md

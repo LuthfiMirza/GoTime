@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s ease-out;
+}
+
+.input {
+  width: 100%;
+  border-radius: 0.875rem;
+  border: 1px solid rgb(228 228 231);
+  background: white;
+  padding: 0.75rem 0.875rem;
+  color: rgb(24 24 27);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus {
+  border-color: rgb(79 70 229);
+  box-shadow: 0 0 0 3px rgb(224 231 255);
+}
+
+.dark .input {
+  border-color: rgb(39 39 42);
+  background: rgb(9 9 11);
+  color: rgb(244 244 245);
+}

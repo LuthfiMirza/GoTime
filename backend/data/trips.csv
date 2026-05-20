@@ -1,0 +1,97 @@
+tanggal,jam_berangkat,asal,tujuan,jarak_km,durasi_api_menit,cuaca,suhu,kelembapan,jenis_kendaraan,durasi_asli_menit
+2026-01-01,06:00,Depok,SCBD,19.0,50.7,cerah,27.2,72,motor,58.1
+2026-01-04,07:10,Bogor,Sudirman,21.5,61.7,cerah,29.7,60,motor,70.7
+2026-01-07,08:15,Bekasi,Kemang,15.6,42.2,cerah,26.6,92,motor,50.9
+2026-01-10,09:20,Tangerang,SCBD,10.0,35.8,cerah,31.1,68,motor,36.6
+2026-01-13,10:30,Jakarta Selatan,Sudirman,11.5,33.1,cerah,32.7,79,motor,31.5
+2026-01-16,12:45,Jakarta Timur,Kemang,12.5,37.5,cerah,27.8,74,motor,38.7
+2026-01-19,14:00,Depok,SCBD,21.2,60.8,cerah,32.8,82,motor,59.1
+2026-01-22,16:10,Bogor,Sudirman,10.3,34.4,cerah,32.1,81,motor,43.1
+2026-01-25,17:15,Bekasi,Kemang,4.1,15.3,cerah,27.3,63,motor,20.8
+2026-01-28,18:20,Tangerang,SCBD,12.5,38.3,berawan,31.7,68,motor,47.8
+2026-01-31,19:30,Jakarta Selatan,Sudirman,26.4,74.8,berawan,29.9,68,motor,81.5
+2026-02-03,20:45,Jakarta Timur,Kemang,14.6,41.9,berawan,32.4,72,motor,48.2
+2026-02-06,06:00,Depok,SCBD,22.4,61.1,berawan,25.3,78,motor,78.5
+2026-02-09,07:10,Bogor,Sudirman,17.2,52.5,hujan,26.7,92,motor,75.2
+2026-02-12,08:15,Bekasi,Kemang,21.6,61.9,hujan,31.0,90,motor,99.0
+2026-02-15,09:20,Tangerang,SCBD,6.5,23.7,hujan,31.0,83,motor,30.7
+2026-02-18,10:30,Jakarta Selatan,Sudirman,13.6,37.6,cerah,28.1,87,motor,37.7
+2026-02-21,12:45,Jakarta Timur,Kemang,27.3,79.0,cerah,25.1,65,motor,79.7
+2026-02-24,14:00,Depok,SCBD,16.4,46.4,cerah,30.1,65,motor,45.6
+2026-02-27,16:10,Bogor,Sudirman,7.0,20.5,cerah,30.8,74,motor,27.2
+2026-03-02,17:15,Bekasi,Kemang,15.7,43.2,cerah,30.0,90,motor,51.9
+2026-03-05,18:20,Tangerang,SCBD,22.1,63.1,cerah,31.2,91,motor,80.5
+2026-03-08,19:30,Jakarta Selatan,Sudirman,15.2,42.0,cerah,27.9,77,motor,41.0
+2026-03-11,20:45,Jakarta Timur,Kemang,9.0,30.6,cerah,25.6,89,motor,31.9
+2026-03-14,06:00,Depok,SCBD,27.4,76.3,cerah,26.0,88,motor,95.8
+2026-03-17,07:10,Bogor,Sudirman,16.2,49.0,berawan,32.7,92,motor,67.9
+2026-03-20,08:15,Bekasi,Kemang,13.0,41.5,berawan,28.0,91,motor,51.6
+2026-03-23,09:20,Tangerang,SCBD,3.5,16.7,berawan,29.7,58,motor,18.2
+2026-03-26,10:30,Jakarta Selatan,Sudirman,8.7,32.9,berawan,31.9,62,motor,35.4
+2026-03-29,12:45,Jakarta Timur,Kemang,15.1,45.6,hujan,30.8,93,motor,58.6
+2026-04-01,14:00,Depok,SCBD,7.8,23.4,hujan,28.4,85,motor,30.8
+2026-04-04,16:10,Bogor,Sudirman,27.6,72.9,hujan,28.2,81,motor,110.9
+2026-04-07,17:15,Bekasi,Kemang,14.2,42.3,cerah,27.2,73,motor,51.8
+2026-04-10,18:20,Tangerang,SCBD,23.2,68.7,cerah,25.8,92,motor,88.5
+2026-04-13,19:30,Jakarta Selatan,Sudirman,26.2,76.1,cerah,26.3,89,motor,76.0
+2026-04-16,20:45,Jakarta Timur,Kemang,24.6,72.6,cerah,26.3,58,motor,74.5
+2026-04-19,06:00,Depok,SCBD,9.6,34.1,cerah,28.6,85,motor,43.3
+2026-04-22,07:10,Bogor,Sudirman,22.6,65.5,cerah,28.9,70,motor,80.2
+2026-04-25,08:15,Bekasi,Kemang,17.5,51.6,cerah,31.0,61,motor,60.1
+2026-04-28,09:20,Tangerang,SCBD,26.0,72.8,cerah,25.5,90,motor,71.1
+2026-05-01,10:30,Jakarta Selatan,Sudirman,7.6,27.4,cerah,30.4,73,motor,27.0
+2026-05-04,12:45,Jakarta Timur,Kemang,26.5,74.4,berawan,29.6,60,motor,82.4
+2026-05-07,14:00,Depok,SCBD,17.6,51.7,berawan,32.5,71,motor,57.0
+2026-05-10,16:10,Bogor,Sudirman,9.6,28.2,berawan,30.2,87,motor,35.8
+2026-05-13,17:15,Bekasi,Kemang,14.5,48.2,berawan,33.0,62,motor,62.4
+2026-05-16,18:20,Tangerang,SCBD,11.7,32.9,hujan,27.0,95,motor,49.5
+2026-05-19,19:30,Jakarta Selatan,Sudirman,27.7,78.1,hujan,25.1,81,motor,108.7
+2026-05-22,20:45,Jakarta Timur,Kemang,6.4,20.0,hujan,25.9,84,motor,26.1
+2026-05-25,06:00,Depok,SCBD,8.1,35.7,cerah,27.1,89,mobil,44.0
+2026-05-28,07:10,Bogor,Sudirman,18.9,73.5,cerah,25.4,79,mobil,96.6
+2026-05-31,08:15,Bekasi,Kemang,21.5,79.6,cerah,28.4,58,mobil,101.8
+2026-06-03,09:20,Tangerang,SCBD,6.7,25.7,cerah,28.0,67,mobil,25.4
+2026-06-06,10:30,Jakarta Selatan,Sudirman,12.1,51.7,cerah,32.8,60,mobil,55.3
+2026-06-09,12:45,Jakarta Timur,Kemang,9.2,34.6,cerah,31.2,84,mobil,39.0
+2026-06-12,14:00,Depok,SCBD,26.1,92.1,cerah,26.3,69,mobil,98.6
+2026-06-15,16:10,Bogor,Sudirman,21.4,77.3,cerah,32.4,73,mobil,97.2
+2026-06-18,17:15,Bekasi,Kemang,24.8,93.4,cerah,26.8,87,mobil,121.9
+2026-06-21,18:20,Tangerang,SCBD,8.6,37.6,berawan,28.2,75,mobil,55.5
+2026-06-24,19:30,Jakarta Selatan,Sudirman,13.0,55.2,berawan,29.3,59,mobil,62.7
+2026-06-27,20:45,Jakarta Timur,Kemang,27.1,95.7,berawan,25.9,85,mobil,111.7
+2026-06-30,06:00,Depok,SCBD,27.6,96.0,berawan,32.2,70,mobil,131.4
+2026-01-03,07:10,Bogor,Sudirman,16.5,64.5,hujan,30.9,80,mobil,106.7
+2026-01-06,08:15,Bekasi,Kemang,19.6,69.5,hujan,32.2,91,mobil,107.8
+2026-01-09,09:20,Tangerang,SCBD,7.8,35.0,hujan,28.0,87,mobil,49.5
+2026-01-12,10:30,Jakarta Selatan,Sudirman,10.6,40.2,cerah,31.3,78,mobil,42.5
+2026-01-15,12:45,Jakarta Timur,Kemang,8.3,34.9,cerah,32.2,68,mobil,36.7
+2026-01-18,14:00,Depok,SCBD,19.6,73.9,cerah,25.7,73,mobil,78.5
+2026-01-21,16:10,Bogor,Sudirman,8.0,29.9,cerah,27.0,88,mobil,39.2
+2026-01-24,17:15,Bekasi,Kemang,25.2,92.2,cerah,30.7,82,mobil,117.4
+2026-01-27,18:20,Tangerang,SCBD,3.1,20.1,cerah,31.2,64,mobil,27.3
+2026-01-30,19:30,Jakarta Selatan,Sudirman,20.4,75.2,cerah,29.5,65,mobil,81.1
+2026-02-02,20:45,Jakarta Timur,Kemang,19.7,77.6,cerah,29.8,86,mobil,84.1
+2026-02-05,06:00,Depok,SCBD,15.6,62.5,cerah,29.4,68,mobil,81.1
+2026-02-08,07:10,Bogor,Sudirman,9.2,39.4,berawan,31.1,91,mobil,54.0
+2026-02-11,08:15,Bekasi,Kemang,8.9,35.7,berawan,32.1,63,mobil,48.3
+2026-02-14,09:20,Tangerang,SCBD,4.6,22.0,berawan,29.3,84,mobil,24.7
+2026-02-17,10:30,Jakarta Selatan,Sudirman,22.2,85.5,berawan,25.2,82,mobil,101.3
+2026-02-20,12:45,Jakarta Timur,Kemang,12.7,53.4,hujan,31.7,95,mobil,77.7
+2026-02-23,14:00,Depok,SCBD,15.2,56.1,hujan,28.9,90,mobil,77.3
+2026-02-26,16:10,Bogor,Sudirman,26.0,98.5,hujan,29.3,83,mobil,153.6
+2026-03-01,17:15,Bekasi,Kemang,7.5,24.1,cerah,27.6,87,motor,29.9
+2026-03-04,18:20,Tangerang,SCBD,12.5,41.0,cerah,31.7,74,motor,51.5
+2026-03-07,19:30,Jakarta Selatan,Sudirman,21.7,57.7,cerah,32.6,72,motor,58.3
+2026-03-10,20:45,Jakarta Timur,Kemang,22.5,65.1,cerah,31.0,73,motor,63.9
+2026-03-13,06:00,Depok,SCBD,3.5,13.1,cerah,26.0,65,motor,15.0
+2026-03-16,07:10,Bogor,Sudirman,20.5,61.2,cerah,26.3,65,motor,75.4
+2026-03-19,08:15,Bekasi,Kemang,10.8,35.2,cerah,32.4,82,motor,43.4
+2026-03-22,09:20,Tangerang,SCBD,4.9,21.5,cerah,30.0,64,motor,22.3
+2026-03-25,10:30,Jakarta Selatan,Sudirman,10.5,35.4,cerah,31.4,60,motor,34.8
+2026-03-28,12:45,Jakarta Timur,Kemang,13.7,40.6,berawan,29.0,79,motor,42.4
+2026-03-31,14:00,Depok,SCBD,15.3,45.2,berawan,27.9,87,motor,50.4
+2026-04-03,16:10,Bogor,Sudirman,21.3,64.9,berawan,27.2,92,motor,88.5
+2026-04-06,17:15,Bekasi,Kemang,17.8,50.4,berawan,27.0,63,motor,66.1
+2026-04-09,18:20,Tangerang,SCBD,17.2,52.0,hujan,27.7,89,motor,81.3
+2026-04-12,19:30,Jakarta Selatan,Sudirman,9.5,29.3,hujan,29.8,94,motor,40.1
+2026-04-15,20:45,Jakarta Timur,Kemang,5.1,22.2,hujan,28.9,93,motor,29.3
