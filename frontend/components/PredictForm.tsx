@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { fetchPrediction, fetchWeather } from '@/lib/api'
 import { buildStaticMapUrl, getRoute, reverseGeocode } from '@/lib/geo'
-import type { RouteResult, SelectedLocation } from '@/lib/geo'
+import type { RouteMode, RouteOptions, RouteResult, SelectedLocation } from '@/lib/geo'
 import type { FormState, PredictRequest, PredictResponse, WeatherResponse } from '@/lib/types'
 import LocationInput from './LocationInput'
 import ResultCard from './ResultCard'
@@ -32,6 +32,50 @@ const vehicleOptions = [
   { value: 'transportasi_umum', label: 'Umum', icon: '🚌' },
 ]
 
+const routeOptions: Array<{
+  vehicle: string
+  mode: RouteMode
+  label: string
+  icon: string
+  description: string
+  avoidTolls?: boolean
+  avoidHighways?: boolean
+}> = [
+  {
+    vehicle: 'motor',
+    mode: 'motorcycle',
+    label: 'Motor',
+    icon: '🏍',
+    description: 'Rute motor, hindari tol',
+    avoidTolls: true,
+    avoidHighways: true,
+  },
+  {
+    vehicle: 'mobil',
+    mode: 'drive',
+    label: 'Mobil',
+    icon: '🚗',
+    description: 'Rute mobil tercepat',
+  },
+  {
+    vehicle: 'transportasi_umum',
+    mode: 'approximated_transit',
+    label: 'Umum',
+    icon: '🚌',
+    description: 'Estimasi kendaraan umum',
+    avoidTolls: true,
+  },
+]
+
+function getRouteOptions(vehicle: string): RouteOptions {
+  const selectedRoute = routeOptions.find((option) => option.vehicle === vehicle) || routeOptions[1]
+  return {
+    mode: selectedRoute.mode,
+    avoidTolls: selectedRoute.avoidTolls,
+    avoidHighways: selectedRoute.avoidHighways,
+  }
+}
+
 const quickLocations: SelectedLocation[] = [
   { name: 'Depok, West Java, Indonesia', lat: -6.40719, lon: 106.8158371 },
   { name: 'Universitas Indonesia, Depok, West Java, Indonesia', lat: -6.3624, lon: 106.8246 },
@@ -50,6 +94,7 @@ export default function PredictForm() {
   const [routeResult, setRouteResult] = useState<RouteResult | null>(null)
   const [mapUrl, setMapUrl] = useState<string>('')
   const [routeLoading, setRouteLoading] = useState(false)
+  const [routePreference, setRoutePreference] = useState(defaultForm.jenis_kendaraan)
   const [currentLocationLoading, setCurrentLocationLoading] = useState(false)
   const resultRef = useRef<HTMLDivElement>(null)
 
@@ -67,7 +112,7 @@ export default function PredictForm() {
 
     const fetchRoute = async () => {
       setRouteLoading(true)
-      const route = await getRoute(asalLoc, tujuanLoc)
+      const route = await getRoute(asalLoc, tujuanLoc, getRouteOptions(routePreference))
       if (route) {
         setRouteResult(route)
         setMapUrl(buildStaticMapUrl(asalLoc, tujuanLoc, route.polyline))
@@ -83,7 +128,7 @@ export default function PredictForm() {
     }
 
     fetchRoute()
-  }, [asalLoc, tujuanLoc])
+  }, [asalLoc, tujuanLoc, routePreference])
 
 
   async function handleUseCurrentLocation() {
@@ -241,6 +286,23 @@ export default function PredictForm() {
             />
           </div>
 
+          <div className="grid gap-2 sm:grid-cols-3">
+            {routeOptions.map((option) => (
+              <button
+                key={option.vehicle}
+                type="button"
+                onClick={() => {
+                  setRoutePreference(option.vehicle)
+                  update('jenis_kendaraan', option.vehicle)
+                }}
+                className={`rounded-2xl border p-3 text-left transition ${routePreference === option.vehicle ? 'border-indigo-600 bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'border-zinc-200 bg-white text-zinc-700 hover:border-indigo-300 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200'}`}
+              >
+                <span className="block text-sm font-bold">{option.icon} {option.label}</span>
+                <span className={`mt-1 block text-xs ${routePreference === option.vehicle ? 'text-indigo-100' : 'text-zinc-500'}`}>{option.description}</span>
+              </button>
+            ))}
+          </div>
+
           {routeLoading && (
             <div className="flex h-48 animate-pulse items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
               <span className="text-sm text-zinc-400">Menghitung rute...</span>
@@ -272,7 +334,10 @@ export default function PredictForm() {
                 <button
                   key={option.value}
                   type="button"
-                  onClick={() => update('jenis_kendaraan', option.value)}
+                  onClick={() => {
+                    update('jenis_kendaraan', option.value)
+                    setRoutePreference(option.value)
+                  }}
                   className={`rounded-2xl border px-3 py-3 text-sm font-semibold transition ${form.jenis_kendaraan === option.value ? 'border-indigo-600 bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'border-zinc-200 bg-white text-zinc-700 hover:border-indigo-300 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200'}`}
                 >
                   <span className="mr-1">{option.icon}</span> {option.label}

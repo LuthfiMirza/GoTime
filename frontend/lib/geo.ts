@@ -6,21 +6,44 @@ export interface SelectedLocation {
   lon: number
 }
 
+export type RouteMode = 'motorcycle' | 'drive' | 'approximated_transit'
+
+export interface RouteOptions {
+  mode: RouteMode
+  avoidTolls?: boolean
+  avoidHighways?: boolean
+}
+
 export interface RouteResult {
   jarak_km: number
   durasi_api_menit: number
   polyline: [number, number][]
 }
 
-export async function getRoute(from: SelectedLocation, to: SelectedLocation): Promise<RouteResult | null> {
+export async function getRoute(
+  from: SelectedLocation,
+  to: SelectedLocation,
+  options: RouteOptions = { mode: 'drive' },
+): Promise<RouteResult | null> {
   if (!GEO_KEY || GEO_KEY === 'your_geoapify_api_key_here') {
     return null
   }
 
   const url = new URL('https://api.geoapify.com/v1/routing')
   url.searchParams.set('waypoints', `${from.lat},${from.lon}|${to.lat},${to.lon}`)
-  url.searchParams.set('mode', 'drive')
+  url.searchParams.set('mode', options.mode)
   url.searchParams.set('apiKey', GEO_KEY)
+
+  const avoidRules = []
+  if (options.avoidTolls) avoidRules.push('tolls')
+  if (options.avoidHighways) avoidRules.push('highways')
+  if (avoidRules.length > 0) {
+    url.searchParams.set('avoid', avoidRules.join('|'))
+  }
+
+  if (options.mode === 'drive') {
+    url.searchParams.set('traffic', 'approximated')
+  }
 
   try {
     const response = await fetch(url.toString())
