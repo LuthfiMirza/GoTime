@@ -54,15 +54,32 @@ export function buildStaticMapUrl(
   polyline: [number, number][],
 ): string {
   const url = new URL('https://maps.geoapify.com/v1/staticmap')
-  const marker = `${from.lon},${from.lat},type-red-icon|${to.lon},${to.lat},type-green-icon`
-  const route = polyline.map(([lat, lon]) => `${lon},${lat}`).join(',')
+  const marker = `lonlat:${from.lon},${from.lat};type:material;color:red;size:large|lonlat:${to.lon},${to.lat};type:material;color:green;size:large`
+  const simplifiedPolyline = simplifyPolyline(polyline)
+  const route = simplifiedPolyline.map(([lat, lon]) => `${lon},${lat}`).join(',')
 
   url.searchParams.set('style', 'osm-carto')
   url.searchParams.set('width', '600')
   url.searchParams.set('height', '300')
   url.searchParams.set('marker', marker)
-  url.searchParams.set('polyline', `weight:3|stroke:#0066ff|${route}`)
+  url.searchParams.set('geometry', `polyline:${route};linewidth:3;linecolor:#0066ff`)
   url.searchParams.set('apiKey', GEO_KEY)
 
   return url.toString()
+}
+
+
+function simplifyPolyline(polyline: [number, number][]): [number, number][] {
+  if (polyline.length <= 80) return polyline
+
+  const step = Math.ceil(polyline.length / 80)
+  const simplified = polyline.filter((_, index) => index % step === 0)
+  const last = polyline[polyline.length - 1]
+  const simplifiedLast = simplified[simplified.length - 1]
+
+  if (last && simplifiedLast && (last[0] !== simplifiedLast[0] || last[1] !== simplifiedLast[1])) {
+    simplified.push(last)
+  }
+
+  return simplified
 }
