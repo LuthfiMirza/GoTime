@@ -282,7 +282,7 @@ export default function PredictForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-5 px-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <ProgressSteps detailDone={detailDone} routeDone={routeDone} conditionDone={conditionDone} resultDone={Boolean(result)} />
       {error && <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
 
@@ -478,7 +478,7 @@ function ProgressSteps({ detailDone, routeDone, conditionDone, resultDone }: { d
   ]
 
   return (
-    <div className="rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-[2rem] border border-orange-100 bg-white p-3 shadow-lg shadow-orange-900/5">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {steps.map((step, index) => (
           <div key={step.label} className={`rounded-2xl px-3 py-2 text-xs font-semibold ${step.done ? 'bg-green-50 text-green-700 ring-1 ring-green-100' : 'bg-zinc-50 text-zinc-500 ring-1 ring-zinc-100 dark:bg-zinc-950 dark:ring-zinc-800'}`}>
@@ -492,7 +492,7 @@ function ProgressSteps({ detailDone, routeDone, conditionDone, resultDone }: { d
 
 function Card({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <section className="rounded-[2rem] border border-orange-100 bg-white p-5 shadow-lg shadow-orange-900/5">
       <div className="mb-5">
         <h2 className="font-display text-xl font-bold">{title}</h2>
         <p className="mt-1 text-sm text-zinc-500">{description}</p>
