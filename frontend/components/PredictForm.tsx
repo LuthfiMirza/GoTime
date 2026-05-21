@@ -1,9 +1,13 @@
 'use client'
 
-import { FormEvent, useRef, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import { fetchPrediction, fetchWeather } from '@/lib/api'
+import { buildStaticMapUrl, getRoute } from '@/lib/geo'
+import type { RouteResult, SelectedLocation } from '@/lib/geo'
 import type { FormState, PredictRequest, PredictResponse, WeatherResponse } from '@/lib/types'
+import LocationInput from './LocationInput'
 import ResultCard from './ResultCard'
+import RouteMap from './RouteMap'
 import WeatherBadge from './WeatherBadge'
 
 const today = new Date().toISOString().slice(0, 10)
@@ -35,11 +39,44 @@ export default function PredictForm() {
   const [result, setResult] = useState<PredictResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [asalLoc, setAsalLoc] = useState<SelectedLocation | null>(null)
+  const [tujuanLoc, setTujuanLoc] = useState<SelectedLocation | null>(null)
+  const [routeResult, setRouteResult] = useState<RouteResult | null>(null)
+  const [mapUrl, setMapUrl] = useState<string>('')
+  const [routeLoading, setRouteLoading] = useState(false)
   const resultRef = useRef<HTMLDivElement>(null)
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }))
   }
+
+
+  useEffect(() => {
+    if (!asalLoc || !tujuanLoc) {
+      setRouteResult(null)
+      setMapUrl('')
+      return
+    }
+
+    const fetchRoute = async () => {
+      setRouteLoading(true)
+      const route = await getRoute(asalLoc, tujuanLoc)
+      if (route) {
+        setRouteResult(route)
+        setMapUrl(buildStaticMapUrl(asalLoc, tujuanLoc, route.polyline))
+        setForm((prev) => ({
+          ...prev,
+          asal: asalLoc.name,
+          tujuan: tujuanLoc.name,
+          jarak_km: route.jarak_km,
+          durasi_api_menit: route.durasi_api_menit,
+        }))
+      }
+      setRouteLoading(false)
+    }
+
+    fetchRoute()
+  }, [asalLoc, tujuanLoc])
 
   async function handleWeather() {
     setWeatherLoading(true)
@@ -100,20 +137,49 @@ export default function PredictForm() {
         </div>
       </Card>
 
-      <Card title="Rute" description="Masukkan estimasi dari maps favoritmu.">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Lokasi asal">
-            <input className="input" value={form.asal} onChange={(e) => update('asal', e.target.value)} placeholder="contoh: Depok, Jawa Barat" />
-          </Field>
-          <Field label="Lokasi tujuan">
-            <input className="input" value={form.tujuan} onChange={(e) => update('tujuan', e.target.value)} placeholder="contoh: Universitas Indonesia, Depok" />
-          </Field>
-          <Field label="Jarak (km)">
-            <input className="input" type="number" min="0.1" step="0.1" value={form.jarak_km} onChange={(e) => update('jarak_km', Number(e.target.value))} />
-          </Field>
-          <Field label="Estimasi Maps (menit)">
-            <input className="input" type="number" min="1" value={form.durasi_api_menit} onChange={(e) => update('durasi_api_menit', Number(e.target.value))} />
-          </Field>
+      <Card title="Rute" description="Pilih lokasi untuk menghitung jarak dan estimasi otomatis.">
+        <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <LocationInput
+              label="Lokasi asal"
+              placeholder="contoh: Depok, Jawa Barat"
+              value={asalLoc}
+              onChange={(location) => {
+                setAsalLoc(location)
+                update('asal', location?.name || '')
+              }}
+            />
+            <LocationInput
+              label="Lokasi tujuan"
+              placeholder="contoh: Universitas Indonesia, Depok"
+              value={tujuanLoc}
+              onChange={(location) => {
+                setTujuanLoc(location)
+                update('tujuan', location?.name || '')
+              }}
+            />
+          </div>
+
+          {routeLoading && (
+            <div className="flex h-48 animate-pulse items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+              <span className="text-sm text-zinc-400">Menghitung rute...</span>
+            </div>
+          )}
+
+          {!routeLoading && routeResult && mapUrl && asalLoc && tujuanLoc && (
+            <RouteMap from={asalLoc} to={tujuanLoc} routeResult={routeResult} mapUrl={mapUrl} />
+          )}
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Jarak (km)">
+              <input className="input" type="number" min="0.1" step="0.1" readOnly={Boolean(routeResult)} value={form.jarak_km} onChange={(e) => update('jarak_km', Number(e.target.value))} />
+              <span className="text-xs font-normal text-zinc-500">{routeResult ? 'Terisi otomatis' : 'Isi manual'}</span>
+            </Field>
+            <Field label="Estimasi Maps (menit)">
+              <input className="input" type="number" min="1" readOnly={Boolean(routeResult)} value={form.durasi_api_menit} onChange={(e) => update('durasi_api_menit', Number(e.target.value))} />
+              <span className="text-xs font-normal text-zinc-500">{routeResult ? 'Terisi otomatis' : 'Isi manual'}</span>
+            </Field>
+          </div>
         </div>
       </Card>
 
