@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Bell, CalendarClock, Clock3, Compass, History, Home, Map, Settings, Sparkles, Umbrella, UserRound } from 'lucide-react'
+import { Bell, CalendarClock, Clock3, Compass, History, Home, Map, Settings, Umbrella, UserRound } from 'lucide-react'
 import PredictForm, { DashboardSnapshot } from '@/components/PredictForm'
 
 const historyItems = [
@@ -60,21 +60,50 @@ export default function HomePage() {
 }
 
 function Sidebar() {
-  const icons = [Home, Map, Compass, History, Settings]
+  const navItems = [
+    { label: 'Dashboard', icon: Home, active: true },
+    { label: 'Map', icon: Map, active: false },
+    { label: 'Prediction', icon: Compass, active: false },
+    { label: 'History', icon: History, active: false },
+    { label: 'Settings', icon: Settings, active: false },
+  ]
+
   return (
-    <aside className="hidden w-[76px] flex-col items-center gap-4 border-r border-gray-100 bg-white py-6 md:flex">
-      <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-gray-200">
-        <Sparkles size={20} />
+    <aside className="hidden w-[76px] flex-col items-center border-r border-gray-100 bg-white py-5 md:flex">
+      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-600 text-sm font-black tracking-tight text-white shadow-lg shadow-gray-200">
+        GT
       </div>
-      {icons.map((Icon, index) => (
-        <button
-          key={index}
-          className={`flex h-11 w-11 items-center justify-center rounded-2xl transition ${index === 0 ? 'bg-indigo-50 text-indigo-600' : 'text-zinc-400 hover:bg-zinc-50 hover:text-indigo-600'}`}
-          type="button"
-        >
-          <Icon size={20} />
-        </button>
-      ))}
+
+      <nav className="mt-10 flex flex-1 flex-col items-center gap-3">
+        {navItems.map((item) => {
+          const Icon = item.icon
+          return (
+            <button
+              key={item.label}
+              className="group relative flex h-11 w-11 items-center justify-center"
+              type="button"
+              aria-label={item.label}
+            >
+              <span
+                className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 ${
+                  item.active
+                    ? 'bg-indigo-100 text-indigo-600'
+                    : 'text-gray-400 hover:bg-gray-50 hover:text-gray-700'
+                }`}
+              >
+                <Icon size={20} />
+              </span>
+              <span className="pointer-events-none absolute left-[52px] z-30 rounded-lg bg-gray-900 px-2.5 py-1.5 text-xs font-bold text-white opacity-0 shadow-lg transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100">
+                {item.label}
+              </span>
+            </button>
+          )
+        })}
+      </nav>
+
+      <div className="mt-auto flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-xs font-black text-white" title="Traveler">
+        T
+      </div>
     </aside>
   )
 }
