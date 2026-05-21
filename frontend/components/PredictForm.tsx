@@ -32,6 +32,12 @@ const vehicleOptions = [
   { value: 'transportasi_umum', label: 'Umum', icon: '🚌' },
 ]
 
+const quickLocations: SelectedLocation[] = [
+  { name: 'Depok, West Java, Indonesia', lat: -6.40719, lon: 106.8158371 },
+  { name: 'Universitas Indonesia, Depok, West Java, Indonesia', lat: -6.3624, lon: 106.8246 },
+  { name: 'Stasiun Depok Baru, Depok, West Java, Indonesia', lat: -6.3917, lon: 106.8228 },
+]
+
 export default function PredictForm() {
   const [form, setForm] = useState<FormState>(defaultForm)
   const [weather, setWeather] = useState<WeatherResponse | null>(null)
@@ -144,6 +150,31 @@ export default function PredictForm() {
 
       <Card title="Rute" description="Pilih lokasi untuk menghitung jarak dan estimasi otomatis.">
         <div className="space-y-4">
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-3 text-sm text-indigo-900 dark:border-indigo-900 dark:bg-indigo-950 dark:text-indigo-100">
+            <p className="font-semibold">Tips biar cepat</p>
+            <p className="mt-1 text-xs opacity-80">Ketik minimal 3 huruf, lalu pilih rekomendasi. Jarak dan durasi baru otomatis terisi setelah dua lokasi terpilih.</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {quickLocations.map((location) => (
+                <button
+                  key={location.name}
+                  type="button"
+                  onClick={() => {
+                    if (!asalLoc) {
+                      setAsalLoc(location)
+                      update('asal', location.name)
+                    } else {
+                      setTujuanLoc(location)
+                      update('tujuan', location.name)
+                    }
+                  }}
+                  className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-200 transition hover:bg-indigo-100 dark:bg-indigo-900 dark:text-indigo-100 dark:ring-indigo-800"
+                >
+                  {location.name.split(',')[0]}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <LocationInput
               label="Lokasi asal"
