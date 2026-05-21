@@ -532,12 +532,13 @@ function ProgressSteps({ detailDone, routeDone, conditionDone, resultDone }: { d
 
 function Card({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-[2rem] border border-gray-100 bg-white p-5 shadow-lg shadow-gray-200/70">
-      <div className="mb-5">
+    <section className="rounded-[2rem] border border-gray-100 bg-white shadow-lg shadow-gray-200/70">
+      <div className="px-5 py-6">
         <h2 className="font-display text-xl font-bold">{title}</h2>
         <p className="mt-1 text-sm text-gray-500">{description}</p>
       </div>
-      {children}
+      <hr className="border-gray-100" />
+      <div className="px-5 py-6">{children}</div>
     </section>
   )
 }
