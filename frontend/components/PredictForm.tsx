@@ -10,6 +10,27 @@ import ResultCard from './ResultCard'
 import RouteMap from './RouteMap'
 import WeatherBadge from './WeatherBadge'
 
+export interface DashboardSnapshot {
+  origin: string
+  destination: string
+  eventTime: string
+  vehicle: string
+  distanceKm: number
+  durationMinutes: number
+  bufferMinutes: number
+  recommendedDeparture: string
+  risk: string
+  weather: string | null
+  temperature: number | null
+  humidity: number | null
+  routeMode: string
+  mapUrl: string
+}
+
+interface PredictFormProps {
+  onDashboardChange?: (snapshot: DashboardSnapshot) => void
+}
+
 const today = new Date().toISOString().slice(0, 10)
 
 const defaultForm: FormState = {
@@ -90,7 +111,7 @@ function getRouteLabel(vehicle: string): string {
   return routeOptions.find((option) => option.vehicle === vehicle)?.mapLabel || routeOptions[1].mapLabel
 }
 
-export default function PredictForm() {
+export default function PredictForm({ onDashboardChange }: PredictFormProps) {
   const [form, setForm] = useState<FormState>(defaultForm)
   const [weather, setWeather] = useState<WeatherResponse | null>(null)
   const [weatherLoading, setWeatherLoading] = useState(false)
@@ -113,6 +134,25 @@ export default function PredictForm() {
   const routeDone = Boolean(routeResult || (Number(form.jarak_km) > 0 && Number(form.durasi_api_menit) > 0))
   const conditionDone = Boolean(form.cuaca && Number(form.suhu) > 0 && Number(form.kelembapan) >= 0)
   const canPredict = detailDone && routeDone && conditionDone
+
+  useEffect(() => {
+    onDashboardChange?.({
+      origin: form.asal,
+      destination: form.tujuan,
+      eventTime: form.event_time,
+      vehicle: form.jenis_kendaraan,
+      distanceKm: Number(form.jarak_km) || 0,
+      durationMinutes: result?.prediksi_durasi_menit || Number(form.durasi_api_menit) || 0,
+      bufferMinutes: form.buffer_menit,
+      recommendedDeparture: result?.jam_berangkat || '',
+      risk: result?.risiko || '',
+      weather: weather?.cuaca || null,
+      temperature: weather?.suhu ?? null,
+      humidity: weather?.kelembapan ?? null,
+      routeMode: getRouteLabel(routePreference),
+      mapUrl,
+    })
+  }, [form, weather, result, routePreference, mapUrl, onDashboardChange])
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }))
