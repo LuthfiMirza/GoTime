@@ -36,7 +36,7 @@ export default function HomePage() {
         <section className="flex min-w-0 flex-1 flex-col bg-gray-50">
           <Header />
 
-          <div className="grid flex-1 gap-5 overflow-y-auto p-5 xl:grid-cols-[1.08fr_0.82fr] 2xl:grid-cols-[1.05fr_0.72fr_0.95fr]">
+          <div className="grid flex-1 gap-6 overflow-y-auto p-6 xl:grid-cols-[1.08fr_0.82fr] 2xl:grid-cols-[1.05fr_0.72fr_0.95fr]">
             <div className="space-y-5">
               <HeroCard snapshot={snapshot} />
               <PredictForm onDashboardChange={setSnapshot} />
@@ -70,11 +70,11 @@ function Sidebar() {
 
   return (
     <aside className="hidden w-[76px] flex-col items-center border-r border-gray-100 bg-white py-5 md:flex">
-      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-600 text-sm font-black tracking-tight text-white shadow-lg shadow-gray-200">
+      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-600 text-sm font-black tracking-tight text-white shadow-sm">
         GT
       </div>
 
-      <nav className="mt-10 flex flex-1 flex-col items-center gap-3">
+      <nav className="mt-10 flex flex-1 flex-col items-center gap-4">
         {navItems.map((item) => {
           const Icon = item.icon
           return (
@@ -91,9 +91,9 @@ function Sidebar() {
                     : 'text-gray-400 hover:bg-gray-50 hover:text-gray-700'
                 }`}
               >
-                <Icon size={20} />
+                <Icon className="h-5 w-5" />
               </span>
-              <span className="pointer-events-none absolute left-[52px] z-30 rounded-lg bg-gray-900 px-2.5 py-1.5 text-xs font-bold text-white opacity-0 shadow-lg transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100">
+              <span className="pointer-events-none absolute left-[52px] z-30 rounded-lg bg-gray-900 px-4 py-2 text-xs font-bold text-white opacity-0 shadow-sm transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100">
                 {item.label}
               </span>
             </button>
@@ -116,13 +116,13 @@ function Header() {
         <h1 className="font-display text-3xl font-bold tracking-tight">Smart Departure & Travel Planner</h1>
         <p className="mt-1 text-sm text-zinc-500">Prediksi waktu berangkat berbasis rute, cuaca, dan machine learning.</p>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <button type="button" className="flex h-11 w-11 items-center justify-center rounded-2xl bg-zinc-50 text-zinc-500 ring-1 ring-zinc-100">
-          <Bell size={18} />
+          <Bell className="h-5 w-5" />
         </button>
-        <div className="flex items-center gap-3 rounded-2xl bg-zinc-50 px-3 py-2 ring-1 ring-zinc-100">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-indigo-700 text-white">
-            <UserRound size={18} />
+        <div className="flex items-center gap-4 rounded-2xl bg-zinc-50 px-4 py-2 ring-1 ring-zinc-100">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white">
+            <UserRound className="h-5 w-5" />
           </div>
           <div className="hidden sm:block">
             <p className="text-sm font-bold">Traveler</p>
@@ -137,16 +137,16 @@ function Header() {
 function HeroCard({ snapshot }: { snapshot: DashboardSnapshot }) {
   const departure = snapshot.recommendedDeparture || '--:--'
   return (
-    <section className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-indigo-600 via-indigo-700 to-blue-600 p-6 text-white shadow-xl shadow-gray-200">
-      <div className="flex flex-wrap items-start justify-between gap-5">
+    <section className="overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-800 p-6 text-white shadow-md">
+      <div className="flex flex-wrap items-start justify-between gap-6">
         <div>
-          <p className="mb-3 inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur">Travel Intelligence</p>
+          <p className="mb-3 inline-flex rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold backdrop-blur">Travel Intelligence</p>
           <h2 className="font-display text-3xl font-bold leading-tight">{snapshot.origin && snapshot.destination ? 'Your next trip is ready.' : 'Plan your next trip.'}</h2>
           <p className="mt-2 max-w-md text-sm leading-6 text-indigo-100">
             {snapshot.origin && snapshot.destination ? `${shortName(snapshot.origin)} menuju ${shortName(snapshot.destination)}` : 'Pilih asal dan tujuan untuk melihat estimasi rute, cuaca, dan jam berangkat.'}
           </p>
         </div>
-        <div className="rounded-3xl bg-white/15 p-4 text-right backdrop-blur">
+        <div className="rounded-2xl bg-white/15 p-4 text-right backdrop-blur">
           <p className="text-xs text-indigo-100">Recommended leave</p>
           <p className="font-mono text-4xl font-black">{departure}</p>
           <p className="text-xs text-indigo-100">{snapshot.durationMinutes ? `${snapshot.durationMinutes} min + ${snapshot.bufferMinutes} min buffer` : 'menunggu prediksi'}</p>
@@ -158,20 +158,20 @@ function HeroCard({ snapshot }: { snapshot: DashboardSnapshot }) {
 
 function PredictionPreview({ snapshot }: { snapshot: DashboardSnapshot }) {
   return (
-    <section className="rounded-[2rem] bg-white p-5 shadow-lg shadow-gray-200/70 ring-1 ring-gray-100">
+    <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Smart Departure</p>
           <h2 className="font-display text-xl font-bold">Leave-Time Prediction</h2>
         </div>
-        <Clock3 className="text-indigo-500" size={22} />
+        <Clock3 className="h-5 w-5 text-indigo-600" />
       </div>
-      <div className="rounded-3xl bg-indigo-50 p-5 text-center">
+      <div className="rounded-2xl bg-indigo-50 p-6 text-center">
         <p className="text-xs font-semibold uppercase tracking-wide text-indigo-500">Recommended Departure</p>
         <p className="mt-1 font-mono text-7xl font-black text-indigo-700">{snapshot.recommendedDeparture || '--:--'}</p>
         <p className="mt-2 text-sm text-indigo-500">{snapshot.durationMinutes ? `${snapshot.durationMinutes} min travel + ${snapshot.bufferMinutes} min buffer` : 'Hasil muncul setelah prediksi'}</p>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-3">
+      <div className="mt-4 grid grid-cols-2 gap-4">
         <MiniMetric label="Risk" value={snapshot.risk || '-'} tone="bg-gray-50 text-gray-700" />
         <MiniMetric label="Vehicle" value={vehicleLabel(snapshot.vehicle)} tone="bg-gray-50 text-gray-700" />
       </div>
@@ -181,12 +181,12 @@ function PredictionPreview({ snapshot }: { snapshot: DashboardSnapshot }) {
 
 function WeatherTrafficCard({ snapshot }: { snapshot: DashboardSnapshot }) {
   return (
-    <section className="rounded-[2rem] bg-white p-5 shadow-lg shadow-gray-200/70 ring-1 ring-gray-100">
+    <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
       <div className="mb-4 flex items-center justify-between">
         <div><p className="text-xs font-bold uppercase tracking-widest text-gray-400">Weather & Traffic</p><h2 className="font-display text-xl font-bold">Conditions</h2></div>
-        <Umbrella className="text-indigo-600" size={22} />
+        <Umbrella className="h-5 w-5 text-indigo-600" />
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <MiniMetric label="Weather" value={snapshot.weather || '-'} tone="bg-gray-50 text-gray-700" />
         <MiniMetric label="Temp" value={snapshot.temperature !== null ? `${snapshot.temperature}°C` : '-'} tone="bg-gray-50 text-gray-700" />
         <MiniMetric label="Humidity" value={snapshot.humidity !== null ? `${snapshot.humidity}%` : '-'} tone="bg-gray-50 text-gray-700" />
@@ -202,15 +202,15 @@ function TravelHistory({ snapshot }: { snapshot: DashboardSnapshot }) {
     : historyItems
 
   return (
-    <section className="rounded-[2rem] bg-white p-5 shadow-lg shadow-gray-200/70 ring-1 ring-gray-100">
+    <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
       <div className="mb-4 flex items-center justify-between">
         <div><p className="text-xs font-bold uppercase tracking-widest text-gray-400">Travel History</p><h2 className="font-display text-xl font-bold">Trip Summary</h2></div>
-        <CalendarClock className="text-indigo-600" size={22} />
+        <CalendarClock className="h-5 w-5 text-indigo-600" />
       </div>
       <div className="space-y-3">
         {activeTrip.map((item) => (
-          <div key={item.route} className={`rounded-2xl p-3 ${item.color}`}>
-            <div className="flex items-center justify-between gap-3">
+          <div key={item.route} className={`rounded-2xl p-4 ${item.color}`}>
+            <div className="flex items-center justify-between gap-4">
               <p className="text-sm font-bold">{item.route}</p>
               <p className="font-mono text-sm font-black">{item.duration}</p>
             </div>
@@ -225,7 +225,7 @@ function TravelHistory({ snapshot }: { snapshot: DashboardSnapshot }) {
 
 function MapPanel({ snapshot }: { snapshot: DashboardSnapshot }) {
   return (
-    <section className="rounded-[2rem] border border-gray-100 bg-white p-5 shadow-lg shadow-gray-200/70">
+    <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <div className="mb-4">
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Live Route</p>
         <h2 className="mt-1 font-display text-2xl font-bold">Map Preview</h2>
@@ -242,11 +242,11 @@ function MapPanel({ snapshot }: { snapshot: DashboardSnapshot }) {
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white/20 to-transparent" />
 
-        <span className="absolute right-4 top-4 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-indigo-600/20">
+        <span className="absolute right-4 top-4 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm">
           Leave at {snapshot.recommendedDeparture || '--:--'}
         </span>
 
-        <div className="absolute bottom-4 left-4 rounded-2xl bg-white/90 p-4 shadow-xl backdrop-blur">
+        <div className="absolute bottom-4 left-4 rounded-2xl bg-white/90 p-4 shadow-md backdrop-blur">
           <p className="text-xs font-bold uppercase tracking-widest text-gray-400">ETA</p>
           <p className="font-mono text-3xl font-black text-indigo-700">{snapshot.durationMinutes || '-'} min</p>
         </div>
@@ -257,7 +257,7 @@ function MapPanel({ snapshot }: { snapshot: DashboardSnapshot }) {
 
 function TripReadiness({ snapshot }: { snapshot: DashboardSnapshot }) {
   return (
-    <section className="rounded-[2rem] bg-white p-5 shadow-lg shadow-gray-200/70 ring-1 ring-gray-100">
+    <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
       <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Trip Readiness</p><h2 className="mt-1 font-display text-xl font-bold">Status</h2>
       <div className="mt-4 space-y-3">
         <Readiness label="Route Forecast" value={snapshot.distanceKm ? 'Ready' : 'Waiting'} />
@@ -270,7 +270,7 @@ function TripReadiness({ snapshot }: { snapshot: DashboardSnapshot }) {
 
 function MiniMetric({ label, value }: { label: string; value: string; tone: string }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-gray-50 p-3">
+    <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
       <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{label}</p>
       <p className="mt-1 font-bold capitalize text-gray-800">{value}</p>
     </div>
@@ -279,11 +279,11 @@ function MiniMetric({ label, value }: { label: string; value: string; tone: stri
 
 function Readiness({ label, value }: { label: string; value: string }) {
   const ready = !['Waiting', '-', ''].includes(value)
-  const badgeClass = ready ? (value === 'Sedang' || value === 'Medium' ? 'bg-orange-500 text-white' : value === 'Tinggi' ? 'bg-red-500 text-white' : 'bg-green-600 text-white') : 'bg-gray-500 text-white'
+  const badgeClass = ready ? (value === 'Sedang' || value === 'Medium' ? 'bg-orange-500 text-white' : value === 'Tinggi' ? 'bg-orange-500 text-white' : 'bg-green-600 text-white') : 'bg-gray-500 text-white'
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-gray-100 bg-gray-50 p-3">
+    <div className="flex items-center justify-between rounded-2xl border border-gray-100 bg-gray-50 p-4">
       <span className="text-sm font-semibold text-gray-600">{label}</span>
-      <span className={`rounded-full px-3 py-1 text-xs font-bold ${badgeClass}`}>{value}</span>
+      <span className={`rounded-full px-4 py-1.5 text-xs font-bold ${badgeClass}`}>{value}</span>
     </div>
   )
 }

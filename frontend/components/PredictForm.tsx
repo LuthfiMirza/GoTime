@@ -324,7 +324,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <ProgressSteps detailDone={detailDone} routeDone={routeDone} conditionDone={conditionDone} resultDone={Boolean(result)} />
-      {error && <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
+      {error && <div className="rounded-2xl border border-orange-500 bg-orange-50 p-4 text-sm text-orange-700">{error}</div>}
 
       <Card title="Detail Acara" description="Tentukan kapan kamu perlu tiba.">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -339,7 +339,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
 
       <Card title="Rute" description="Pilih lokasi untuk menghitung jarak dan estimasi otomatis.">
         <div className="space-y-4">
-          <div className="rounded-2xl border border-gray-100 bg-gray-50 p-3 text-sm text-gray-800 dark:border-gray-100 dark:bg-gray-50 dark:text-gray-700">
+          <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4 text-sm text-gray-800 dark:border-gray-100 dark:bg-gray-50 dark:text-gray-700">
             <p className="font-semibold">Tips biar cepat</p>
             <p className="mt-1 text-xs opacity-80">Ketik minimal 3 huruf, lalu pilih rekomendasi. Jarak dan durasi baru otomatis terisi setelah dua lokasi terpilih.</p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -356,7 +356,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
                       update('tujuan', location.name)
                     }
                   }}
-                  className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-gray-100 transition hover:bg-indigo-600 dark:bg-gray-50 dark:text-gray-700 dark:ring-gray-100"
+                  className="rounded-full bg-white px-4 py-1.5.5 text-xs font-semibold text-white ring-1 ring-gray-100 transition hover:bg-indigo-600 dark:bg-gray-50 dark:text-gray-700 dark:ring-gray-100"
                 >
                   {location.name.split(',')[0]}
                 </button>
@@ -364,7 +364,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-start">
+          <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-start">
             <LocationInput
               label="Lokasi asal"
               placeholder="contoh: Depok, Jawa Barat"
@@ -380,7 +380,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
               type="button"
               onClick={handleSwapLocations}
               disabled={!asalLoc && !tujuanLoc}
-              className="mt-8 rounded-full border border-gray-100 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-100 dark:bg-white dark:text-gray-700"
+              className="mt-8 rounded-full border border-gray-100 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-100 dark:bg-white dark:text-gray-700"
             >
               ↕ Tukar
             </button>
@@ -404,7 +404,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
                   setRoutePreference(option.vehicle)
                   update('jenis_kendaraan', option.vehicle)
                 }}
-                className={`rounded-2xl border p-3 text-left transition ${routePreference === option.vehicle ? 'border-indigo-600 bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'border-gray-100 bg-white text-gray-700 hover:border-indigo-300 dark:border-gray-100 dark:bg-white dark:text-gray-700'}`}
+                className={`rounded-2xl border p-4 text-left transition ${routePreference === option.vehicle ? 'border-indigo-600 bg-indigo-600 text-white shadow-sm shadow-indigo-100' : 'border-gray-100 bg-white text-gray-700 hover:border-indigo-300 dark:border-gray-100 dark:bg-white dark:text-gray-700'}`}
               >
                 <span className="block text-sm font-bold">{option.icon} {option.label}</span>
                 <span className={`mt-1 block text-xs ${routePreference === option.vehicle ? 'text-gray-700' : 'text-gray-500'}`}>{option.description}</span>
@@ -419,7 +419,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
           )}
 
           {routeError && !routeLoading && (
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-100">
+            <div className="rounded-2xl border border-orange-500 bg-orange-50 p-4 text-sm text-orange-700   ">
               {routeError}
             </div>
           )}
@@ -455,7 +455,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
                     update('jenis_kendaraan', option.value)
                     setRoutePreference(option.value)
                   }}
-                  className={`rounded-2xl border px-3 py-3 text-sm font-semibold transition ${form.jenis_kendaraan === option.value ? 'border-indigo-600 bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'border-gray-100 bg-white text-gray-700 hover:border-indigo-300 dark:border-gray-100 dark:bg-white dark:text-gray-700'}`}
+                  className={`rounded-2xl border px-3 py-3 text-sm font-semibold transition ${form.jenis_kendaraan === option.value ? 'border-indigo-600 bg-indigo-600 text-white shadow-sm shadow-indigo-100' : 'border-gray-100 bg-white text-gray-700 hover:border-indigo-300 dark:border-gray-100 dark:bg-white dark:text-gray-700'}`}
                 >
                   <span className="mr-1">{option.icon}</span> {option.label}
                 </button>
@@ -469,7 +469,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
 
           {form.asal && form.event_date && (
             <div className="space-y-3 rounded-2xl border border-gray-100 p-4 dark:border-gray-100">
-              <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <p className="font-semibold">Cuaca otomatis</p>
                   <p className="text-sm text-gray-500">{weather?.source === 'api' ? 'Cuaca sudah terisi otomatis dari lokasi asal.' : 'Ambil prakiraan dari lokasi asal.'}</p>
@@ -500,7 +500,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
         </div>
       </Card>
 
-      <button type="submit" disabled={loading || !canPredict} className="w-full rounded-2xl bg-indigo-600 px-5 py-4 text-base font-bold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60">
+      <button type="submit" disabled={loading || !canPredict} className="w-full rounded-2xl bg-indigo-600 px-5 py-4 text-base font-bold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60">
         {loading ? 'Menghitung prediksi…' : 'Prediksi Jam Berangkat →'}
       </button>
 
@@ -518,10 +518,10 @@ function ProgressSteps({ detailDone, routeDone, conditionDone, resultDone }: { d
   ]
 
   return (
-    <div className="rounded-[2rem] border border-gray-100 bg-white p-3 shadow-lg shadow-gray-200/70">
+    <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {steps.map((step, index) => (
-          <div key={step.label} className={`rounded-2xl px-3 py-2 text-xs font-semibold ${step.done ? 'bg-green-50 text-green-700 ring-1 ring-green-100' : 'bg-gray-50 text-gray-500 ring-1 ring-zinc-100 dark:bg-white dark:ring-zinc-800'}`}>
+          <div key={step.label} className={`rounded-2xl px-4 py-2 text-xs font-semibold ${step.done ? 'bg-gray-50 text-gray-700 ring-1 ring-green-100' : 'bg-gray-50 text-gray-500 ring-1 ring-zinc-100 dark:bg-white dark:ring-zinc-800'}`}>
             {index + 1}. {step.label} {step.done ? '✓' : ''}
           </div>
         ))}
@@ -532,7 +532,7 @@ function ProgressSteps({ detailDone, routeDone, conditionDone, resultDone }: { d
 
 function Card({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-[2rem] border border-gray-100 bg-white shadow-lg shadow-gray-200/70">
+    <section className="rounded-2xl border border-gray-100 bg-white shadow-sm">
       <div className="px-5 py-6">
         <h2 className="font-display text-xl font-bold">{title}</h2>
         <p className="mt-1 text-sm text-gray-500">{description}</p>

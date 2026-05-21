@@ -3,7 +3,7 @@ import RiskBadge from './RiskBadge'
 
 export default function ResultCard({ result }: { result: PredictResponse }) {
   return (
-    <section className="animate-fade-in overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-lg shadow-gray-200/60">
+    <section className="animate-fade-in overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm/60">
       <div className="bg-white p-6">
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">⏰ Berangkat jam</p>
         <p className="mt-2 font-mono text-7xl font-black tracking-tight text-indigo-700">{result.jam_berangkat}</p>

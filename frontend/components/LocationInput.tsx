@@ -79,14 +79,14 @@ export default function LocationInput({
       <span className="flex items-center justify-between gap-2">
         <span className="flex items-center gap-2">
           {label}
-          {value && <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">✅ Terpilih</span>}
+          {value && <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-gray-700">✅ Terpilih</span>}
         </span>
         {onUseCurrentLocation && (
           <button
             type="button"
             onClick={onUseCurrentLocation}
             disabled={currentLocationLoading}
-            className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-100 transition hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-indigo-950 dark:text-indigo-100 dark:ring-indigo-900"
+            className="rounded-full bg-indigo-50 px-4 py-1.5 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-100 transition hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-indigo-950 dark:text-indigo-100 dark:ring-indigo-900"
           >
             {currentLocationLoading ? 'Mendeteksi…' : '📍 Lokasi saya'}
           </button>

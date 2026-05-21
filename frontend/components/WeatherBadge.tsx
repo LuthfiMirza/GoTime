@@ -9,7 +9,7 @@ function iconFor(weather: string | null) {
 export default function WeatherBadge({ weather }: { weather: WeatherResponse }) {
   const isApi = weather.source === 'api'
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2 text-sm dark:border-gray-100 dark:bg-white">
+    <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-2 text-sm dark:border-gray-100 dark:bg-white">
       <span className="text-lg">{iconFor(weather.cuaca)}</span>
       <span className="font-medium capitalize">{weather.cuaca ?? 'Cuaca manual'}</span>
       {weather.suhu !== null && <span>{weather.suhu}°C</span>}
