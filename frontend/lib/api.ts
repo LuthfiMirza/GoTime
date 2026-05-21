@@ -28,9 +28,9 @@ export async function fetchPrediction(data: PredictRequest): Promise<PredictResp
   }
 }
 
-export async function fetchWeather(city: string, date: string, time: string): Promise<WeatherResponse> {
+export async function fetchWeather(city: string, date: string, time: string, coordinates?: { lat: number; lon: number }): Promise<WeatherResponse> {
   try {
-    const response = await api.get<WeatherResponse>('/weather/', { params: { city, date, time } })
+    const response = await api.get<WeatherResponse>('/weather/', { params: { city, date, time, ...coordinates } })
     return response.data
   } catch (error) {
     throw humanError(error, 'Gagal mengambil data cuaca.')

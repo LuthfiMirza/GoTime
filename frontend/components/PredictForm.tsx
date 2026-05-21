@@ -82,7 +82,12 @@ export default function PredictForm() {
     setWeatherLoading(true)
     setError(null)
     try {
-      const data = await fetchWeather(form.asal, form.event_date, form.event_time)
+      const data = await fetchWeather(
+        form.asal,
+        form.event_date,
+        form.event_time,
+        asalLoc ? { lat: asalLoc.lat, lon: asalLoc.lon } : undefined,
+      )
       setWeather(data)
       if (data.cuaca) update('cuaca', data.cuaca)
       if (data.suhu !== null) update('suhu', data.suhu)
