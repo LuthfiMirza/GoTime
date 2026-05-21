@@ -5,11 +5,19 @@ interface RouteMapProps {
   to: SelectedLocation
   routeResult: RouteResult
   mapUrl: string
+  routeLabel: string
 }
 
-export default function RouteMap({ from, to, routeResult, mapUrl }: RouteMapProps) {
+export default function RouteMap({ from, to, routeResult, mapUrl, routeLabel }: RouteMapProps) {
   return (
     <section className="space-y-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">Peta rute perjalanan</p>
+        <span className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700 dark:bg-indigo-950 dark:text-indigo-100">
+          Mode: {routeLabel}
+        </span>
+      </div>
+
       {mapUrl ? (
         <img src={mapUrl} className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800" loading="lazy" alt="Peta rute perjalanan" />
       ) : (

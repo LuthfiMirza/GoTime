@@ -17,8 +17,8 @@ const defaultForm: FormState = {
   event_time: '08:00',
   asal: '',
   tujuan: '',
-  jarak_km: 8.2,
-  durasi_api_menit: 35,
+  jarak_km: 0,
+  durasi_api_menit: 0,
   cuaca: 'cerah',
   suhu: 28,
   kelembapan: 75,
@@ -38,6 +38,7 @@ const routeOptions: Array<{
   label: string
   icon: string
   description: string
+  mapLabel: string
   avoidTolls?: boolean
   avoidHighways?: boolean
 }> = [
@@ -47,6 +48,7 @@ const routeOptions: Array<{
     label: 'Motor',
     icon: '🏍',
     description: 'Rute motor, hindari tol',
+    mapLabel: 'Motor — Hindari tol',
     avoidTolls: true,
     avoidHighways: true,
   },
@@ -56,6 +58,7 @@ const routeOptions: Array<{
     label: 'Mobil',
     icon: '🚗',
     description: 'Rute mobil tercepat',
+    mapLabel: 'Mobil — Rute tercepat',
   },
   {
     vehicle: 'transportasi_umum',
@@ -63,8 +66,15 @@ const routeOptions: Array<{
     label: 'Umum',
     icon: '🚌',
     description: 'Estimasi kendaraan umum',
+    mapLabel: 'Umum — Estimasi transit',
     avoidTolls: true,
   },
+]
+
+const quickLocations: SelectedLocation[] = [
+  { name: 'Depok, West Java, Indonesia', lat: -6.40719, lon: 106.8158371 },
+  { name: 'Universitas Indonesia, Depok, West Java, Indonesia', lat: -6.3624, lon: 106.8246 },
+  { name: 'Stasiun Depok Baru, Depok, West Java, Indonesia', lat: -6.3917, lon: 106.8228 },
 ]
 
 function getRouteOptions(vehicle: string): RouteOptions {
@@ -76,16 +86,15 @@ function getRouteOptions(vehicle: string): RouteOptions {
   }
 }
 
-const quickLocations: SelectedLocation[] = [
-  { name: 'Depok, West Java, Indonesia', lat: -6.40719, lon: 106.8158371 },
-  { name: 'Universitas Indonesia, Depok, West Java, Indonesia', lat: -6.3624, lon: 106.8246 },
-  { name: 'Stasiun Depok Baru, Depok, West Java, Indonesia', lat: -6.3917, lon: 106.8228 },
-]
+function getRouteLabel(vehicle: string): string {
+  return routeOptions.find((option) => option.vehicle === vehicle)?.mapLabel || routeOptions[1].mapLabel
+}
 
 export default function PredictForm() {
   const [form, setForm] = useState<FormState>(defaultForm)
   const [weather, setWeather] = useState<WeatherResponse | null>(null)
   const [weatherLoading, setWeatherLoading] = useState(false)
+  const [weatherAutoFetchedKey, setWeatherAutoFetchedKey] = useState('')
   const [result, setResult] = useState<PredictResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -94,25 +103,62 @@ export default function PredictForm() {
   const [routeResult, setRouteResult] = useState<RouteResult | null>(null)
   const [mapUrl, setMapUrl] = useState<string>('')
   const [routeLoading, setRouteLoading] = useState(false)
+  const [routeError, setRouteError] = useState<string | null>(null)
   const [routePreference, setRoutePreference] = useState(defaultForm.jenis_kendaraan)
   const [currentLocationLoading, setCurrentLocationLoading] = useState(false)
   const resultRef = useRef<HTMLDivElement>(null)
+  const routeMapRef = useRef<HTMLDivElement>(null)
+
+  const detailDone = Boolean(form.event_date && form.event_time)
+  const routeDone = Boolean(routeResult || (Number(form.jarak_km) > 0 && Number(form.durasi_api_menit) > 0))
+  const conditionDone = Boolean(form.cuaca && Number(form.suhu) > 0 && Number(form.kelembapan) >= 0)
+  const canPredict = detailDone && routeDone && conditionDone
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }))
   }
 
+  async function loadWeather(options?: { silent?: boolean }) {
+    if (!form.event_date || !form.event_time || (!form.asal && !asalLoc)) return
+
+    setWeatherLoading(true)
+    if (!options?.silent) setError(null)
+    try {
+      const data = await fetchWeather(
+        form.asal || asalLoc?.name || 'Lokasi asal',
+        form.event_date,
+        form.event_time,
+        asalLoc ? { lat: asalLoc.lat, lon: asalLoc.lon } : undefined,
+      )
+      setWeather(data)
+      if (data.cuaca) update('cuaca', data.cuaca)
+      if (data.suhu !== null) update('suhu', data.suhu)
+      if (data.kelembapan !== null) update('kelembapan', data.kelembapan)
+    } catch (err) {
+      if (!options?.silent) {
+        setError(err instanceof Error ? err.message : 'Gagal mengambil cuaca otomatis.')
+      }
+    } finally {
+      setWeatherLoading(false)
+    }
+  }
 
   useEffect(() => {
     if (!asalLoc || !tujuanLoc) {
       setRouteResult(null)
       setMapUrl('')
+      setRouteError(null)
       return
     }
 
+    let cancelled = false
+
     const fetchRoute = async () => {
       setRouteLoading(true)
+      setRouteError(null)
       const route = await getRoute(asalLoc, tujuanLoc, getRouteOptions(routePreference))
+      if (cancelled) return
+
       if (route) {
         setRouteResult(route)
         setMapUrl(buildStaticMapUrl(asalLoc, tujuanLoc, route.polyline))
@@ -123,13 +169,31 @@ export default function PredictForm() {
           jarak_km: route.jarak_km,
           durasi_api_menit: route.durasi_api_menit,
         }))
+        setTimeout(() => routeMapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120)
+      } else {
+        setRouteResult(null)
+        setMapUrl('')
+        setRouteError('Rute otomatis gagal dihitung. Kamu tetap bisa isi jarak dan durasi manual.')
       }
       setRouteLoading(false)
     }
 
     fetchRoute()
+
+    return () => {
+      cancelled = true
+    }
   }, [asalLoc, tujuanLoc, routePreference])
 
+  useEffect(() => {
+    if (!asalLoc || !form.event_date || !form.event_time || weatherLoading) return
+
+    const autoKey = `${asalLoc.lat},${asalLoc.lon},${form.event_date},${form.event_time}`
+    if (weatherAutoFetchedKey === autoKey) return
+
+    setWeatherAutoFetchedKey(autoKey)
+    loadWeather({ silent: true })
+  }, [asalLoc, form.event_date, form.event_time, weatherAutoFetchedKey, weatherLoading])
 
   async function handleUseCurrentLocation() {
     setError(null)
@@ -144,20 +208,14 @@ export default function PredictForm() {
       async (position) => {
         const { latitude, longitude } = position.coords
         const location = await reverseGeocode(latitude, longitude)
-
-        if (location) {
-          setAsalLoc(location)
-          update('asal', location.name)
-        } else {
-          const fallback = {
-            name: `Lokasi saya (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`,
-            lat: latitude,
-            lon: longitude,
-          }
-          setAsalLoc(fallback)
-          update('asal', fallback.name)
+        const selectedLocation = location || {
+          name: `Lokasi saya (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`,
+          lat: latitude,
+          lon: longitude,
         }
 
+        setAsalLoc(selectedLocation)
+        update('asal', selectedLocation.name)
         setCurrentLocationLoading(false)
       },
       () => {
@@ -172,32 +230,34 @@ export default function PredictForm() {
     )
   }
 
-  async function handleWeather() {
-    setWeatherLoading(true)
-    setError(null)
-    try {
-      const data = await fetchWeather(
-        form.asal,
-        form.event_date,
-        form.event_time,
-        asalLoc ? { lat: asalLoc.lat, lon: asalLoc.lon } : undefined,
-      )
-      setWeather(data)
-      if (data.cuaca) update('cuaca', data.cuaca)
-      if (data.suhu !== null) update('suhu', data.suhu)
-      if (data.kelembapan !== null) update('kelembapan', data.kelembapan)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Gagal mengambil cuaca otomatis.')
-    } finally {
-      setWeatherLoading(false)
-    }
+  function handleSwapLocations() {
+    if (!asalLoc && !tujuanLoc) return
+
+    const previousAsal = asalLoc
+    const previousTujuan = tujuanLoc
+    setAsalLoc(previousTujuan)
+    setTujuanLoc(previousAsal)
+    setForm((prev) => ({
+      ...prev,
+      asal: previousTujuan?.name || '',
+      tujuan: previousAsal?.name || '',
+    }))
+    setRouteResult(null)
+    setMapUrl('')
+    setRouteError(null)
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setLoading(true)
     setError(null)
     setResult(null)
+
+    if (Number(form.jarak_km) <= 0 || Number(form.durasi_api_menit) <= 0) {
+      setError('Lengkapi rute terlebih dahulu atau isi jarak dan estimasi menit manual sebelum prediksi.')
+      return
+    }
+
+    setLoading(true)
     const payload: PredictRequest = {
       event_time: form.event_time,
       event_date: form.event_date,
@@ -223,15 +283,16 @@ export default function PredictForm() {
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-5 px-4">
+      <ProgressSteps detailDone={detailDone} routeDone={routeDone} conditionDone={conditionDone} resultDone={Boolean(result)} />
       {error && <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
 
       <Card title="Detail Acara" description="Tentukan kapan kamu perlu tiba.">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Tanggal acara">
-            <input className="input" type="date" min={today} value={form.event_date} onChange={(e) => update('event_date', e.target.value)} />
+            <input className="input" type="date" min={today} value={form.event_date} onChange={(event) => update('event_date', event.target.value)} />
           </Field>
           <Field label="Jam acara">
-            <input className="input" type="time" value={form.event_time} onChange={(e) => update('event_time', e.target.value)} />
+            <input className="input" type="time" value={form.event_time} onChange={(event) => update('event_time', event.target.value)} />
           </Field>
         </div>
       </Card>
@@ -263,7 +324,7 @@ export default function PredictForm() {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-start">
             <LocationInput
               label="Lokasi asal"
               placeholder="contoh: Depok, Jawa Barat"
@@ -275,6 +336,14 @@ export default function PredictForm() {
               onUseCurrentLocation={handleUseCurrentLocation}
               currentLocationLoading={currentLocationLoading}
             />
+            <button
+              type="button"
+              onClick={handleSwapLocations}
+              disabled={!asalLoc && !tujuanLoc}
+              className="mt-8 rounded-full border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200"
+            >
+              ↕ Tukar
+            </button>
             <LocationInput
               label="Lokasi tujuan"
               placeholder="contoh: Universitas Indonesia, Depok"
@@ -309,17 +378,25 @@ export default function PredictForm() {
             </div>
           )}
 
-          {!routeLoading && routeResult && mapUrl && asalLoc && tujuanLoc && (
-            <RouteMap from={asalLoc} to={tujuanLoc} routeResult={routeResult} mapUrl={mapUrl} />
+          {routeError && !routeLoading && (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-100">
+              {routeError}
+            </div>
           )}
+
+          <div ref={routeMapRef}>
+            {!routeLoading && routeResult && mapUrl && asalLoc && tujuanLoc && (
+              <RouteMap from={asalLoc} to={tujuanLoc} routeResult={routeResult} mapUrl={mapUrl} routeLabel={getRouteLabel(routePreference)} />
+            )}
+          </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Jarak (km)">
-              <input className="input" type="number" min="0.1" step="0.1" readOnly={Boolean(routeResult)} value={form.jarak_km} onChange={(e) => update('jarak_km', Number(e.target.value))} />
+              <input className="input" type="number" min="0" step="0.1" readOnly={Boolean(routeResult)} value={form.jarak_km || ''} onChange={(event) => update('jarak_km', Number(event.target.value))} placeholder="contoh: 8.2" />
               <span className="text-xs font-normal text-zinc-500">{routeResult ? 'Terisi otomatis' : 'Isi manual'}</span>
             </Field>
             <Field label="Estimasi Maps (menit)">
-              <input className="input" type="number" min="1" readOnly={Boolean(routeResult)} value={form.durasi_api_menit} onChange={(e) => update('durasi_api_menit', Number(e.target.value))} />
+              <input className="input" type="number" min="0" readOnly={Boolean(routeResult)} value={form.durasi_api_menit || ''} onChange={(event) => update('durasi_api_menit', Number(event.target.value))} placeholder="contoh: 35" />
               <span className="text-xs font-normal text-zinc-500">{routeResult ? 'Terisi otomatis' : 'Isi manual'}</span>
             </Field>
           </div>
@@ -347,7 +424,7 @@ export default function PredictForm() {
           </Field>
 
           <Field label={`Buffer keamanan: ${form.buffer_menit} menit`}>
-            <input className="w-full accent-indigo-600" type="range" min="0" max="60" step="5" value={form.buffer_menit} onChange={(e) => update('buffer_menit', Number(e.target.value))} />
+            <input className="w-full accent-indigo-600" type="range" min="0" max="60" step="5" value={form.buffer_menit} onChange={(event) => update('buffer_menit', Number(event.target.value))} />
           </Field>
 
           {form.asal && form.event_date && (
@@ -355,10 +432,10 @@ export default function PredictForm() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="font-semibold">Cuaca otomatis</p>
-                  <p className="text-sm text-zinc-500">Ambil prakiraan dari lokasi asal.</p>
+                  <p className="text-sm text-zinc-500">{weather?.source === 'api' ? 'Cuaca sudah terisi otomatis dari lokasi asal.' : 'Ambil prakiraan dari lokasi asal.'}</p>
                 </div>
-                <button type="button" onClick={handleWeather} disabled={weatherLoading} className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-zinc-950">
-                  {weatherLoading ? 'Mengambil…' : 'Ambil Cuaca Otomatis'}
+                <button type="button" onClick={() => loadWeather()} disabled={weatherLoading} className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-zinc-950">
+                  {weatherLoading ? 'Mengambil…' : weather ? 'Refresh Cuaca' : 'Ambil Cuaca Otomatis'}
                 </button>
               </div>
               {weather && <WeatherBadge weather={weather} />}
@@ -367,28 +444,49 @@ export default function PredictForm() {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <Field label="Cuaca">
-              <select className="input" value={form.cuaca} onChange={(e) => update('cuaca', e.target.value)}>
+              <select className="input" value={form.cuaca} onChange={(event) => update('cuaca', event.target.value)}>
                 <option value="cerah">Cerah</option>
                 <option value="berawan">Berawan</option>
                 <option value="hujan">Hujan</option>
               </select>
             </Field>
             <Field label="Suhu (°C)">
-              <input className="input" type="number" value={form.suhu} onChange={(e) => update('suhu', Number(e.target.value))} />
+              <input className="input" type="number" value={form.suhu} onChange={(event) => update('suhu', Number(event.target.value))} />
             </Field>
             <Field label="Kelembapan (%)">
-              <input className="input" type="number" min="0" max="100" value={form.kelembapan} onChange={(e) => update('kelembapan', Number(e.target.value))} />
+              <input className="input" type="number" min="0" max="100" value={form.kelembapan} onChange={(event) => update('kelembapan', Number(event.target.value))} />
             </Field>
           </div>
         </div>
       </Card>
 
-      <button type="submit" disabled={loading} className="w-full rounded-2xl bg-indigo-600 px-5 py-4 text-base font-bold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60">
+      <button type="submit" disabled={loading || !canPredict} className="w-full rounded-2xl bg-indigo-600 px-5 py-4 text-base font-bold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60">
         {loading ? 'Menghitung prediksi…' : 'Prediksi Jam Berangkat →'}
       </button>
 
       <div ref={resultRef}>{result && <ResultCard result={result} />}</div>
     </form>
+  )
+}
+
+function ProgressSteps({ detailDone, routeDone, conditionDone, resultDone }: { detailDone: boolean; routeDone: boolean; conditionDone: boolean; resultDone: boolean }) {
+  const steps = [
+    { label: 'Detail acara', done: detailDone },
+    { label: 'Rute', done: routeDone },
+    { label: 'Kondisi', done: conditionDone },
+    { label: 'Prediksi', done: resultDone },
+  ]
+
+  return (
+    <div className="rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {steps.map((step, index) => (
+          <div key={step.label} className={`rounded-2xl px-3 py-2 text-xs font-semibold ${step.done ? 'bg-green-50 text-green-700 ring-1 ring-green-100' : 'bg-zinc-50 text-zinc-500 ring-1 ring-zinc-100 dark:bg-zinc-950 dark:ring-zinc-800'}`}>
+            {index + 1}. {step.label} {step.done ? '✓' : ''}
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
