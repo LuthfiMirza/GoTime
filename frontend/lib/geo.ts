@@ -48,6 +48,38 @@ export async function getRoute(from: SelectedLocation, to: SelectedLocation): Pr
   }
 }
 
+
+export async function reverseGeocode(lat: number, lon: number): Promise<SelectedLocation | null> {
+  if (!GEO_KEY || GEO_KEY === 'your_geoapify_api_key_here') {
+    return {
+      name: `Lokasi saya (${lat.toFixed(5)}, ${lon.toFixed(5)})`,
+      lat,
+      lon,
+    }
+  }
+
+  const url = new URL('https://api.geoapify.com/v1/geocode/reverse')
+  url.searchParams.set('lat', String(lat))
+  url.searchParams.set('lon', String(lon))
+  url.searchParams.set('apiKey', GEO_KEY)
+
+  try {
+    const response = await fetch(url.toString())
+    if (!response.ok) return null
+
+    const data = await response.json()
+    const properties = data?.features?.[0]?.properties
+
+    return {
+      name: properties?.formatted || `Lokasi saya (${lat.toFixed(5)}, ${lon.toFixed(5)})`,
+      lat,
+      lon,
+    }
+  } catch {
+    return null
+  }
+}
+
 export function buildStaticMapUrl(
   from: SelectedLocation,
   to: SelectedLocation,

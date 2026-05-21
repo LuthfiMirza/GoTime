@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { fetchPrediction, fetchWeather } from '@/lib/api'
-import { buildStaticMapUrl, getRoute } from '@/lib/geo'
+import { buildStaticMapUrl, getRoute, reverseGeocode } from '@/lib/geo'
 import type { RouteResult, SelectedLocation } from '@/lib/geo'
 import type { FormState, PredictRequest, PredictResponse, WeatherResponse } from '@/lib/types'
 import LocationInput from './LocationInput'
@@ -50,6 +50,7 @@ export default function PredictForm() {
   const [routeResult, setRouteResult] = useState<RouteResult | null>(null)
   const [mapUrl, setMapUrl] = useState<string>('')
   const [routeLoading, setRouteLoading] = useState(false)
+  const [currentLocationLoading, setCurrentLocationLoading] = useState(false)
   const resultRef = useRef<HTMLDivElement>(null)
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -83,6 +84,48 @@ export default function PredictForm() {
 
     fetchRoute()
   }, [asalLoc, tujuanLoc])
+
+
+  async function handleUseCurrentLocation() {
+    setError(null)
+
+    if (!navigator.geolocation) {
+      setError('Browser tidak mendukung deteksi lokasi. Isi lokasi asal secara manual.')
+      return
+    }
+
+    setCurrentLocationLoading(true)
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords
+        const location = await reverseGeocode(latitude, longitude)
+
+        if (location) {
+          setAsalLoc(location)
+          update('asal', location.name)
+        } else {
+          const fallback = {
+            name: `Lokasi saya (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`,
+            lat: latitude,
+            lon: longitude,
+          }
+          setAsalLoc(fallback)
+          update('asal', fallback.name)
+        }
+
+        setCurrentLocationLoading(false)
+      },
+      () => {
+        setError('Izin lokasi ditolak atau lokasi tidak tersedia. Pilih lokasi asal dari autocomplete.')
+        setCurrentLocationLoading(false)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      },
+    )
+  }
 
   async function handleWeather() {
     setWeatherLoading(true)
@@ -184,6 +227,8 @@ export default function PredictForm() {
                 setAsalLoc(location)
                 update('asal', location?.name || '')
               }}
+              onUseCurrentLocation={handleUseCurrentLocation}
+              currentLocationLoading={currentLocationLoading}
             />
             <LocationInput
               label="Lokasi tujuan"
