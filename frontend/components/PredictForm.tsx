@@ -25,6 +25,9 @@ export interface DashboardSnapshot {
   humidity: number | null
   routeMode: string
   mapUrl: string
+  originLocation: SelectedLocation | null
+  destinationLocation: SelectedLocation | null
+  routePolyline: [number, number][]
 }
 
 interface PredictFormProps {
@@ -151,6 +154,9 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
       humidity: weather?.kelembapan ?? null,
       routeMode: getRouteLabel(routePreference),
       mapUrl,
+      originLocation: asalLoc,
+      destinationLocation: tujuanLoc,
+      routePolyline: routeResult?.polyline || [],
     })
   }, [form, weather, result, routePreference, mapUrl, onDashboardChange])
 

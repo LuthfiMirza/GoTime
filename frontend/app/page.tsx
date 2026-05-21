@@ -1,8 +1,18 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Bell, CalendarClock, Clock3, Compass, History, Home, Map, Settings, Umbrella, UserRound } from 'lucide-react'
 import PredictForm, { DashboardSnapshot } from '@/components/PredictForm'
+
+const InteractiveMap = dynamic(() => import('@/components/InteractiveMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full min-h-[320px] items-center justify-center bg-gray-50 text-sm font-semibold text-gray-400">
+      Memuat peta interaktif...
+    </div>
+  ),
+})
 
 const historyItems = [
   { route: 'Belum ada histori', time: '-', duration: 'Mulai prediksi pertama', color: 'bg-gray-50 text-gray-700' },
@@ -23,6 +33,9 @@ const initialSnapshot: DashboardSnapshot = {
   humidity: null,
   routeMode: 'Motor — Hindari tol',
   mapUrl: '',
+  originLocation: null,
+  destinationLocation: null,
+  routePolyline: [],
 }
 
 export default function HomePage() {
@@ -224,6 +237,8 @@ function TravelHistory({ snapshot }: { snapshot: DashboardSnapshot }) {
 }
 
 function MapPanel({ snapshot }: { snapshot: DashboardSnapshot }) {
+  const hasInteractiveRoute = snapshot.originLocation && snapshot.destinationLocation && snapshot.routePolyline.length > 0
+
   return (
     <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <div className="mb-4">
@@ -232,21 +247,26 @@ function MapPanel({ snapshot }: { snapshot: DashboardSnapshot }) {
       </div>
 
       <div className="relative min-h-[320px] overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
-        {snapshot.mapUrl ? (
-          <img src={snapshot.mapUrl} alt="Peta rute perjalanan" className="absolute inset-0 h-full w-full object-cover" />
+        {hasInteractiveRoute ? (
+          <InteractiveMap
+            from={snapshot.originLocation!}
+            to={snapshot.destinationLocation!}
+            polyline={snapshot.routePolyline}
+            className="h-full min-h-[320px] w-full"
+          />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center px-8 text-center text-sm font-semibold text-gray-500">
-            Pilih asal dan tujuan untuk menampilkan peta asli.
+            Pilih asal dan tujuan untuk menampilkan peta interaktif.
           </div>
         )}
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white/20 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[500] h-28 bg-gradient-to-t from-white/20 to-transparent" />
 
-        <span className="absolute right-4 top-4 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm">
+        <span className="absolute right-4 top-4 z-[500] rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm">
           Leave at {snapshot.recommendedDeparture || '--:--'}
         </span>
 
-        <div className="absolute bottom-4 left-4 rounded-2xl bg-white/90 p-4 shadow-md backdrop-blur">
+        <div className="absolute bottom-4 left-4 z-[500] rounded-xl bg-white/90 p-4 shadow-md backdrop-blur">
           <p className="text-xs font-bold uppercase tracking-widest text-gray-400">ETA</p>
           <p className="font-mono text-3xl font-black text-indigo-700">{snapshot.durationMinutes || '-'} min</p>
         </div>
