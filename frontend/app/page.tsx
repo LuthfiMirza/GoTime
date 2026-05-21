@@ -225,24 +225,31 @@ function TravelHistory({ snapshot }: { snapshot: DashboardSnapshot }) {
 
 function MapPanel({ snapshot }: { snapshot: DashboardSnapshot }) {
   return (
-    <section className="relative min-h-[520px] overflow-hidden rounded-[2rem] bg-gray-50 p-5 shadow-lg shadow-gray-200/70 ring-1 ring-gray-100">
-      <div className="relative z-10 flex items-center justify-between">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Live Route</p>
-          <h2 className="font-display text-2xl font-bold">Map Preview</h2>
-        </div>
-        <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-indigo-600 shadow-sm">Leave at {snapshot.recommendedDeparture || '--:--'}</span>
+    <section className="rounded-[2rem] border border-gray-100 bg-white p-5 shadow-lg shadow-gray-200/70">
+      <div className="mb-4">
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Live Route</p>
+        <h2 className="mt-1 font-display text-2xl font-bold">Map Preview</h2>
       </div>
-      {snapshot.mapUrl ? (
-        <img src={snapshot.mapUrl} alt="Peta rute perjalanan" className="relative z-10 mt-6 h-[390px] w-full rounded-3xl object-cover shadow-inner" />
-      ) : (
-        <div className="relative z-10 mt-6 flex h-[390px] items-center justify-center rounded-3xl bg-white/60 text-center text-sm font-semibold text-zinc-500">
-          Pilih asal dan tujuan untuk menampilkan peta asli.
+
+      <div className="relative min-h-[320px] overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
+        {snapshot.mapUrl ? (
+          <img src={snapshot.mapUrl} alt="Peta rute perjalanan" className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center px-8 text-center text-sm font-semibold text-gray-500">
+            Pilih asal dan tujuan untuk menampilkan peta asli.
+          </div>
+        )}
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white/20 to-transparent" />
+
+        <span className="absolute right-4 top-4 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-indigo-600/20">
+          Leave at {snapshot.recommendedDeparture || '--:--'}
+        </span>
+
+        <div className="absolute bottom-4 left-4 rounded-2xl bg-white/90 p-4 shadow-xl backdrop-blur">
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">ETA</p>
+          <p className="font-mono text-3xl font-black text-indigo-700">{snapshot.durationMinutes || '-'} min</p>
         </div>
-      )}
-      <div className="absolute bottom-6 left-6 z-20 rounded-3xl bg-white/90 p-4 shadow-xl backdrop-blur">
-        <p className="text-xs font-semibold text-zinc-500">ETA</p>
-        <p className="font-mono text-3xl font-black text-indigo-600">{snapshot.durationMinutes || '-'} min</p>
       </div>
     </section>
   )
