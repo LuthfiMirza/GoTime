@@ -46,3 +46,26 @@ body {
   background: white;
   color: rgb(17 24 39);
 }
+
+.geoapify-input-wrap .geoapify-autocomplete-input {
+  min-height: 46px;
+  width: 100%;
+  border-radius: 0.875rem;
+  border: 1px solid rgb(229 231 235);
+  box-shadow: none;
+  color: rgb(17 24 39);
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+.geoapify-input-wrap .geoapify-autocomplete-input:focus {
+  border-color: rgb(129 140 248);
+  box-shadow: 0 0 0 2px rgb(238 242 255);
+}
+
+.geoapify-input-wrap .geoapify-autocomplete-items {
+  border: 1px solid rgb(229 231 235);
+  border-radius: 0.875rem;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgb(17 24 39 / 0.08);
+}

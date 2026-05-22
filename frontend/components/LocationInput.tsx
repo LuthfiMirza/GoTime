@@ -75,18 +75,18 @@ export default function LocationInput({
         : 'Ketik minimal 3 huruf, lalu pilih dari dropdown.'
 
   return (
-    <label className="block space-y-2 text-sm font-medium text-zinc-700 dark:text-zinc-200">
-      <span className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-2">
+    <label className="block min-w-0 space-y-2 text-sm font-medium text-gray-700">
+      <span className="flex min-h-[32px] items-center justify-between gap-2">
+        <span className="flex min-w-0 items-center gap-2">
           {label}
-          {value && <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-gray-700">✅ Terpilih</span>}
+          {value && <span className="shrink-0 rounded-full bg-green-600 px-2 py-0.5 text-xs font-bold text-white">✅ Terpilih</span>}
         </span>
         {onUseCurrentLocation && (
           <button
             type="button"
             onClick={onUseCurrentLocation}
             disabled={currentLocationLoading}
-            className="rounded-full bg-indigo-50 px-4 py-1.5 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-100 transition hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-indigo-950 dark:text-indigo-100 dark:ring-indigo-900"
+            className="shrink-0 rounded-full border border-indigo-200 bg-white px-3 py-1.5 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {currentLocationLoading ? 'Mendeteksi…' : '📍 Lokasi saya'}
           </button>
@@ -107,7 +107,7 @@ export default function LocationInput({
           />
         </div>
       </GeoapifyContext>
-      <span className={`block text-xs font-normal ${value ? 'text-green-600' : 'text-zinc-500'}`}>{helperText}</span>
+      <span className={`block min-h-[32px] break-words text-xs font-normal leading-4 ${value ? 'text-gray-600' : 'text-gray-500'}`}>{helperText}</span>
     </label>
   )
 }

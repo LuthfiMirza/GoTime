@@ -362,7 +362,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
                       update('tujuan', location.name)
                     }
                   }}
-                  className="rounded-full bg-white px-4 py-1.5.5 text-xs font-semibold text-white ring-1 ring-gray-100 transition hover:bg-indigo-600 dark:bg-gray-50 dark:text-gray-700 dark:ring-gray-100"
+                  className="rounded-full border border-indigo-200 bg-white px-4 py-2 text-xs font-semibold text-indigo-600 transition hover:scale-105 hover:bg-indigo-50 active:bg-indigo-100"
                 >
                   {location.name.split(',')[0]}
                 </button>
@@ -370,7 +370,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-start">
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-start">
             <LocationInput
               label="Lokasi asal"
               placeholder="contoh: Depok, Jawa Barat"
@@ -386,7 +386,7 @@ export default function PredictForm({ onDashboardChange }: PredictFormProps) {
               type="button"
               onClick={handleSwapLocations}
               disabled={!asalLoc && !tujuanLoc}
-              className="mt-8 rounded-full border border-gray-100 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-100 dark:bg-white dark:text-gray-700"
+              className="self-start rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-40 lg:mt-10"
             >
               ↕ Tukar
             </button>
