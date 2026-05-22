@@ -2,6 +2,11 @@
 
 GoTime adalah aplikasi full-stack untuk memprediksi **jam berangkat terbaik** agar pengguna tiba tepat waktu. Aplikasi ini menggabungkan dashboard travel planner modern, routing interaktif, cuaca otomatis, dan model Machine Learning untuk menghitung rekomendasi waktu berangkat.
 
+
+## Screenshot
+
+![GoTime Dashboard](docs/screenshots/dashboard.jpeg)
+
 ## Highlight
 
 - **Dashboard travel planner modern** dengan layout sidebar, live route map, smart departure card, weather card, dan trip readiness.
