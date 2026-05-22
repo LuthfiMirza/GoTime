@@ -1,30 +1,43 @@
-# GoTime
+# GoTime — Smart Departure & Travel Planner
 
-GoTime adalah aplikasi full-stack untuk memprediksi jam berangkat yang ideal berdasarkan detail perjalanan, kondisi cuaca, estimasi durasi dari maps, buffer keamanan, dan model Machine Learning.
+GoTime adalah aplikasi full-stack untuk memprediksi **jam berangkat terbaik** agar pengguna tiba tepat waktu. Aplikasi ini menggabungkan dashboard travel planner modern, routing interaktif, cuaca otomatis, dan model Machine Learning untuk menghitung rekomendasi waktu berangkat.
 
-Project ini dibuat sebagai portfolio project dengan arsitektur monorepo:
+## Highlight
 
-- `backend/` — FastAPI + scikit-learn model
-- `frontend/` — Next.js 14 + TypeScript + Tailwind CSS
+- **Dashboard travel planner modern** dengan layout sidebar, live route map, smart departure card, weather card, dan trip readiness.
+- **Prediksi jam berangkat berbasis ML** menggunakan `RandomForestRegressor`.
+- **Interactive route map** dengan Leaflet + Geoapify tiles, mendukung zoom, drag, marker, dan route line.
+- **Autocomplete lokasi Indonesia** menggunakan Geoapify Geocoder Autocomplete.
+- **Gunakan lokasi saya** via browser geolocation + reverse geocoding.
+- **Mode rute**: Motor, Mobil, dan Transportasi Umum.
+- **Motor route** diarahkan untuk menghindari tol/highway.
+- **Cuaca otomatis** dari OpenWeather berdasarkan koordinat lokasi asal.
+- **Fallback manual** jika routing/cuaca/API key tidak tersedia.
+- **Swagger docs** tersedia dari backend FastAPI.
 
-## Fitur
+## Preview Fitur
 
-- Prediksi jam berangkat berdasarkan waktu acara dan estimasi perjalanan.
-- Model Machine Learning `RandomForestRegressor` untuk memprediksi durasi perjalanan aktual.
-- Input kondisi perjalanan: jarak, estimasi maps, kendaraan, cuaca, suhu, kelembapan, dan buffer.
-- Integrasi OpenWeather untuk cuaca otomatis berdasarkan kota, tanggal, dan waktu.
-- Fallback manual jika API key cuaca belum tersedia atau forecast gagal.
-- Health check backend dengan status model loaded.
-- UI modern dan responsif untuk form prediksi dan kartu hasil.
+Flow utama aplikasi:
+
+```text
+Pilih tanggal & jam acara
+→ pilih lokasi asal/tujuan atau pakai GPS
+→ pilih mode rute
+→ map interaktif + jarak + durasi muncul
+→ cuaca otomatis terisi
+→ klik prediksi
+→ GoTime memberi jam berangkat, risiko, dan tips
+```
 
 ## Tech Stack
 
 | Layer | Teknologi |
 | --- | --- |
-| Frontend | Next.js 14, React, TypeScript, Tailwind CSS, Axios |
+| Frontend | Next.js 14, React, TypeScript, Tailwind CSS, Axios, Lucide React |
+| Map & Geocoding | Geoapify, Leaflet, React Leaflet |
 | Backend | FastAPI, Pydantic, Uvicorn, Requests |
 | Machine Learning | pandas, scikit-learn, joblib, RandomForestRegressor |
-| External API | OpenWeather Geocoding + 5 Day Forecast |
+| Weather API | OpenWeather Forecast API |
 
 ## Struktur Project
 
@@ -34,6 +47,8 @@ GoTime/
 │   ├── app/
 │   │   ├── main.py
 │   │   ├── routers/
+│   │   │   ├── predict.py
+│   │   │   └── weather.py
 │   │   ├── schemas/
 │   │   └── services/
 │   ├── data/trips.csv
@@ -44,7 +59,15 @@ GoTime/
 ├── frontend/
 │   ├── app/
 │   ├── components/
+│   │   ├── InteractiveMap.tsx
+│   │   ├── LocationInput.tsx
+│   │   ├── PredictForm.tsx
+│   │   ├── RouteMap.tsx
+│   │   └── ...
 │   ├── lib/
+│   │   ├── api.ts
+│   │   ├── geo.ts
+│   │   └── types.ts
 │   ├── package.json
 │   └── .env.example
 └── README.md
@@ -52,56 +75,39 @@ GoTime/
 
 ## Prasyarat
 
-Pastikan sudah terinstall:
-
 - Python 3.9 atau lebih baru
 - Node.js 18 atau lebih baru
 - npm
+- API key OpenWeather untuk cuaca otomatis
+- API key Geoapify untuk autocomplete, routing, map tiles, dan reverse geocoding
 
 ## Setup Backend
 
-Masuk ke folder backend:
-
 ```bash
 cd backend
-```
-
-Buat virtual environment:
-
-```bash
 python3 -m venv venv
 source venv/bin/activate
-```
-
-Install dependency:
-
-```bash
 pip install -r requirements.txt
-```
-
-Buat file environment:
-
-```bash
 cp .env.example .env
 ```
 
-Isi API key OpenWeather di `backend/.env`:
+Isi `backend/.env`:
 
 ```env
 OPENWEATHER_API_KEY=your_openweather_api_key_here
 ```
 
-> Jika API key belum diisi atau tidak valid, aplikasi tetap berjalan. Fitur cuaca otomatis akan fallback ke input manual.
+> Jika API key OpenWeather kosong/tidak valid, aplikasi tetap berjalan dan cuaca otomatis fallback ke mode manual.
 
 ## Training Model
 
-Jalankan training dari folder `backend/`:
+Jalankan dari folder `backend/`:
 
 ```bash
 python scripts/train_model.py
 ```
 
-Contoh output training:
+Hasil verifikasi terakhir:
 
 ```text
 === GoTime Model Training ===
@@ -112,13 +118,12 @@ Status : ✅ Model siap (MAE < 10 menit)
 Saved  : model/travel_time_model.pkl
 ```
 
-File model `.pkl` dibuat secara lokal di `backend/model/` dan tidak di-commit ke Git.
+File model `.pkl` dibuat lokal di `backend/model/` dan tidak di-commit.
 
 ## Menjalankan Backend
 
-Dari folder `backend/`:
-
 ```bash
+cd backend
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -127,7 +132,7 @@ Endpoint penting:
 - Health check: `http://localhost:8000/health`
 - Swagger docs: `http://localhost:8000/docs`
 
-Contoh response health:
+Contoh response:
 
 ```json
 {
@@ -138,49 +143,36 @@ Contoh response health:
 
 ## Setup Frontend
 
-Buka terminal baru, lalu masuk ke folder frontend:
-
 ```bash
 cd frontend
-```
-
-Install dependency:
-
-```bash
 npm install
-```
-
-Buat file environment jika belum ada:
-
-```bash
 cp .env.example .env.local
 ```
 
-Isi URL backend:
+Isi `frontend/.env.local`:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_GEOAPIFY_KEY=your_geoapify_api_key_here
 ```
 
-Jalankan development server:
+Jalankan frontend:
 
 ```bash
 npm run dev
 ```
 
-Buka browser ke:
+Buka URL yang muncul, biasanya:
 
 ```text
 http://localhost:3000
 ```
 
-Jika port `3000` sedang dipakai, Next.js akan otomatis memakai port lain seperti `3001`.
+Jika port 3000/3001 terpakai, Next.js otomatis memakai port berikutnya seperti `3002`.
 
 ## API Contract
 
 ### `GET /health`
-
-Response:
 
 ```json
 {
@@ -196,7 +188,7 @@ Request:
 ```json
 {
   "event_time": "08:00",
-  "event_date": "2026-05-21",
+  "event_date": "2026-05-22",
   "jarak_km": 8.2,
   "durasi_api_menit": 35,
   "cuaca": "hujan",
@@ -212,9 +204,9 @@ Response:
 ```json
 {
   "jam_berangkat": "07:03",
-  "prediksi_durasi_menit": 46.8,
+  "prediksi_durasi_menit": 46.9,
   "buffer_menit": 10,
-  "total_menit": 56.8,
+  "total_menit": 56.9,
   "risiko": "Sedang",
   "tips": "Kondisi hujan biasanya menambah 15–30% durasi perjalanan. Waspadai genangan."
 }
@@ -224,29 +216,30 @@ Response:
 
 Query params:
 
-- `city` — nama kota, contoh `Depok`
+- `city` — nama kota/alamat fallback
 - `date` — format `YYYY-MM-DD`
 - `time` — format `HH:MM`
+- `lat` dan `lon` — opsional, direkomendasikan untuk cuaca akurat berdasarkan lokasi asal
 
 Contoh:
 
 ```text
-http://localhost:8000/weather/?city=Depok&date=2026-05-21&time=08:00
+http://localhost:8000/weather/?city=Depok&date=2026-05-22&time=08:00&lat=-6.40719&lon=106.81584
 ```
 
-Response sukses dari API:
+Response sukses:
 
 ```json
 {
-  "cuaca": "hujan",
-  "suhu": 27.3,
-  "kelembapan": 85,
-  "deskripsi": "light rain",
+  "cuaca": "berawan",
+  "suhu": 30.8,
+  "kelembapan": 61,
+  "deskripsi": "broken clouds",
   "source": "api"
 }
 ```
 
-Response fallback manual:
+Response fallback:
 
 ```json
 {
@@ -258,27 +251,51 @@ Response fallback manual:
 }
 ```
 
-## Cara Menggunakan Aplikasi
+## Cara Menggunakan
 
 1. Jalankan backend di `localhost:8000`.
-2. Jalankan frontend di `localhost:3000` atau port yang ditampilkan Next.js.
+2. Jalankan frontend dan buka URL yang ditampilkan Next.js.
 3. Isi tanggal dan jam acara.
-4. Isi lokasi asal, lokasi tujuan, jarak, dan estimasi durasi maps.
-5. Pilih kendaraan dan buffer keamanan.
-6. Klik `Ambil Cuaca Otomatis` jika OpenWeather API key valid.
-7. Jika cuaca otomatis gagal, isi cuaca, suhu, dan kelembapan secara manual.
-8. Klik `Prediksi Jam Berangkat →`.
-9. Lihat hasil rekomendasi jam berangkat, risiko, dan tips.
+4. Pilih lokasi asal dengan autocomplete atau tombol `Lokasi saya`.
+5. Pilih lokasi tujuan.
+6. Pilih mode rute: Motor, Mobil, atau Umum.
+7. Lihat map interaktif, jarak, dan estimasi durasi otomatis.
+8. Cek cuaca otomatis atau isi manual jika fallback.
+9. Atur buffer keamanan.
+10. Klik `Prediksi Jam Berangkat`.
+11. Lihat rekomendasi jam berangkat, risiko, tips, dan ringkasan dashboard.
+
+## Verifikasi Terakhir
+
+Verifikasi lokal terakhir berhasil:
+
+- Training model: `MAE 6.42 menit`
+- Backend `/health`: `model_loaded: true`
+- Backend `/predict/`: response sukses dengan `jam_berangkat`
+- Frontend `npm run build`: sukses
 
 ## Catatan Development
 
-- `backend/.env`, `frontend/.env.local`, `frontend/node_modules/`, `frontend/.next/`, dan `backend/model/*.pkl` tidak di-commit.
-- File instruksi lokal seperti `PLAN.md` dan `CLAUDE*.md` juga tidak di-commit.
-- CORS backend mengizinkan `localhost:3000`, `localhost:3001`, `127.0.0.1:3000`, dan `127.0.0.1:3001` untuk development.
+File berikut sengaja tidak di-commit:
 
-## Status Saat Ini
+- `backend/.env`
+- `frontend/.env.local`
+- `frontend/node_modules/`
+- `frontend/.next/`
+- `backend/model/*.pkl`
+- `PLAN.md`
+- `CLAUDE.md`
+- `backend/CLAUDE-backend.md`
+- `frontend/CLAUDE-frontend.md`
 
-- Backend health check berhasil dengan `model_loaded: true`.
-- Training model berhasil dengan MAE `6.42 menit`.
-- Frontend production build berhasil.
-- Cuaca otomatis membutuhkan OpenWeather API key yang valid dan aktif.
+CORS backend sudah mengizinkan port development lokal umum seperti `localhost:3000`, `3001`, dan `3002`.
+
+## Status Project
+
+Project siap untuk dipresentasikan sebagai portfolio full-stack ML dashboard. Bagian utama yang sudah kuat:
+
+- Backend API jelas dan terdokumentasi lewat Swagger.
+- Model ML sudah memenuhi target MAE `< 10 menit`.
+- Frontend sudah berbentuk dashboard modern.
+- Map sudah interaktif, bukan static image.
+- Secret/API key aman karena tidak di-commit.
